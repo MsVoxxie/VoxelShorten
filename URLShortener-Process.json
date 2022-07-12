@@ -1,0 +1,5 @@
+{
+	"name": "URLShortener",
+	"script": "src/server.js",
+	"watch": true
+}
