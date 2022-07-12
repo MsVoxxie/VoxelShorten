@@ -1,4 +1,5 @@
 const ShortURL = require('./storage/models/shortURL');
+const helpers = require('./storage/funcs/helpers');
 const mongoose = require('mongoose');
 const express = require('express');
 const moment = require('moment');
@@ -20,7 +21,7 @@ const mainView = path.join(`${__dirname}/storage/views/index.ejs`);
 
 app.get('/', async (req, res) => {
 	const shortURLS = await ShortURL.find().sort({ createdAt: -1 });
-	res.render(mainView, { shortURLS: shortURLS });
+	res.render(mainView, { shortURLS, trim: helpers.trim });
 });
 
 app.post('/shortenURL', async (req, res) => {
