@@ -5,9 +5,28 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>VoxelShortener</title>
+		<style> @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap'); </style>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+		<script type="text/javascript">
+			function copyToClipboard(clk) {
+				// Get Clicked
+				const clicked = document.getElementById(clk);
+				const clkID = clicked.id;
+
+				// Style
+				clicked.innerHTML = 'Copied!';
+				setTimeout(() => {
+					clicked.innerHTML = clkID
+				}, 3 * 1000);
+
+				// Copy stuff
+				const endPoint = `${window.location.origin}/${clkID}`
+				navigator.clipboard.writeText(endPoint);
+				return;
+			}
+		</script>
 	</head>
-	<body>
+	<body style="font-family: 'Roboto', sans-serif">
 		<div class="container mt-4">
 			<h1>VoxelShortener</h1>
 			<form action="/shortenURL" method="POST" class="my-4 d-flex flex-row align-items-center flex-wrap">
@@ -31,8 +50,8 @@
 						<tbody>
 							<% shortURLS.forEach(shortURL => { %>
 							<tr>
-								<td><a href="<%= shortURL.full %>"><%= trim(shortURL.full, 93) %> </a></td>
-								<td class="text-center"><a href="<%= shortURL.short %>"><%= shortURL.short %></a></td>
+								<td><a href="<%= shortURL.full %>" class="text-decoration-none"><%= trim(shortURL.full, 93) %> </a></td>
+								<td class="text-center text-nowrap"><a href="javascript:void(0)" class="text-decoration-none" id="<%= shortURL.short %>" onclick=copyToClipboard(this.id)><%= shortURL.short %></a></td>
 								<td class="text-center"><%= shortURL.clicks %></td>
 								<td class="text-center"><%= shortURL.createdAt %></td>
 							</tr>
