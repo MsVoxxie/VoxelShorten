@@ -21,7 +21,7 @@
 				<div class="table-responsive">
 					<table class="table table-striped" style="table-layout: fixed">
 						<thread>
-							<tr>
+							<tr class="text-center">
 								<th style="width: 40%">Full URL</th>
 								<th>Short URL</th>
 								<th>Clicks</th>
@@ -32,9 +32,9 @@
 							<% shortURLS.forEach(shortURL => { %>
 							<tr>
 								<td><a href="<%= shortURL.full %>"><%= trim(shortURL.full, 93) %> </a></td>
-								<td><a href="<%= shortURL.short %>"><%= shortURL.short %></a></td>
-								<td><%= shortURL.clicks %></td>
-								<td><%= shortURL.createdAt %></td>
+								<td class="text-center"><a href="<%= shortURL.short %>"><%= shortURL.short %></a></td>
+								<td class="text-center"><%= shortURL.clicks %></td>
+								<td class="text-center"><%= shortURL.createdAt %></td>
 							</tr>
 							<% }); %>
 						</tbody>
