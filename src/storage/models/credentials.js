@@ -6,14 +6,9 @@ const credentialsSchema = new mongoose.Schema({
 		required: true,
 		default: Date.now().toString(),
 	},
-	name: {
+	username: {
 		type: String,
 		required: true,
-	},
-	email: {
-		type: String,
-		required: true,
-		unique: true,
 	},
 	password: {
 		type: String,

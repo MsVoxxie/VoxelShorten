@@ -22,12 +22,14 @@ mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTo
 //Initialize Passport
 initializePassport(
 	passport,
-	async (email) => await Credentials.findOne({ email: email }),
+	async (username) => await Credentials.findOne({ username: username }),
 	async (id) => await Credentials.findOne({ id: id })
 );
 
 // Use ejs for templating
 app.set('view engine', 'ejs');
+
+// Set up sessions
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
@@ -81,10 +83,11 @@ app.get('/register', helpers.checkNotAuthenticated, (req, res) => {
 
 app.post('/register', helpers.checkNotAuthenticated, async (req, res) => {
 	try {
+		const userCheck = await Credentials.exists({ username: req.body.username });
+		if (userCheck) return res.send('Username already exists').status(400);
 		const hashedPassword = await bcrypt.hash(req.body.password, 10);
 		await Credentials.create({
-			name: req.body.name,
-			email: req.body.email,
+			username: req.body.username,
 			password: hashedPassword,
 		});
 
