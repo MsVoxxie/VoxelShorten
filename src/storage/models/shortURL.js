@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const shortId = require('shortid');
 
 const shortURLSchema = new mongoose.Schema({
+	owner: {
+		type: String,
+		required: true,
+	},
 	full: {
 		type: String,
 		required: true,

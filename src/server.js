@@ -1,7 +1,13 @@
+const Credentials = require('./storage/models/credentials');
+const initializePassport = require('./passport-config');
 const ShortURL = require('./storage/models/shortURL');
 const helpers = require('./storage/funcs/helpers');
+const session = require('express-session');
+const flash = require('express-flash');
+const passport = require('passport');
 const mongoose = require('mongoose');
 const express = require('express');
+const bcrypt = require('bcrypt');
 const moment = require('moment');
 const https = require('https');
 const path = require('path');
@@ -12,20 +18,80 @@ const app = express();
 //Login to MongoDB
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
+//Initialize Passport
+initializePassport(
+	passport,
+	async (email) => await Credentials.findOne({ email: email }),
+	async (id) => await Credentials.findOne({ id: id })
+);
+
 // Use ejs for templating
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
+app.use(flash());
+app.use(
+	session({
+		secret: process.env.SESSION_SECRET,
+		resave: false,
+		saveUninitialized: false,
+	})
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Get Views
-const mainView = path.join(`${__dirname}/storage/views/index.ejs`);
+const views = {
+	home: path.join(`${__dirname}/storage/views/index.ejs`),
+	register: path.join(`${__dirname}/storage/views/register.ejs`),
+	login: path.join(`${__dirname}/storage/views/login.ejs`),
+};
 
-app.get('/', async (req, res) => {
-	const shortURLS = await ShortURL.find().sort({ createdAt: -1 });
-	res.render(mainView, { shortURLS, trim: helpers.trim });
+//Home Page
+app.get('/', helpers.checkAuthenticated, async (req, res) => {
+	console.log(req.session.passport.user);
+	const shortURLS = await ShortURL.find({ owner: req.session.passport.user }).sort({ createdAt: -1 });
+	res.render(views.home, { shortURLS, trim: helpers.trim });
 });
 
+// Login Page
+app.get('/login', helpers.checkNotAuthenticated, (req, res) => {
+	res.render(views.login);
+});
+
+app.post(
+	'/login',
+	helpers.checkNotAuthenticated,
+	passport.authenticate('local', {
+		successRedirect: '/',
+		failureRedirect: '/login',
+		failureFlash: true,
+	})
+);
+
+//Register Page
+app.get('/register', helpers.checkNotAuthenticated, (req, res) => {
+	res.render(views.register);
+});
+
+app.post('/register', helpers.checkNotAuthenticated, async (req, res) => {
+	try {
+		const hashedPassword = await bcrypt.hash(req.body.password, 10);
+		await Credentials.create({
+			name: req.body.name,
+			email: req.body.email,
+			password: hashedPassword,
+		});
+
+		res.redirect('/login');
+	} catch (error) {
+		res.redirect('/register');
+		console.log(error);
+	}
+});
+
+// Shorten Endpoint
 app.post('/shortenURL', async (req, res) => {
-	await ShortURL.create({ full: req.body.fullURL, createdAt: moment(Date().now).format('MMMM Do YYYY, h:mm A') });
+	await ShortURL.create({ owner: req.session.passport.user, full: req.body.fullURL, createdAt: moment(Date().now).format('MMMM Do YYYY, h:mm A') });
 	res.redirect('/');
 });
 
