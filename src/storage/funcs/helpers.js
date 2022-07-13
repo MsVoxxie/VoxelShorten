@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 function trim(str, max) {
 	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
 }
@@ -16,8 +18,13 @@ function checkNotAuthenticated(req, res, next) {
 	next();
 }
 
+function humanDate(date) {
+	return moment(date).format('MMMM Do YYYY, h:mm A');
+}
+
 module.exports = {
 	trim: trim,
+	humanDate: humanDate,
 	checkAuthenticated: checkAuthenticated,
 	checkNotAuthenticated: checkNotAuthenticated,
 };

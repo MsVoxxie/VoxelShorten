@@ -53,7 +53,7 @@
 								<td><a href="<%= shortURL.full %>" class="text-decoration-none"><%= trim(shortURL.full, 93) %> </a></td>
 								<td class="text-center text-nowrap"><a href="javascript:void(0)" class="text-decoration-none" id="<%= shortURL.short %>" onclick=copyToClipboard(this.id)><%= shortURL.short %></a></td>
 								<td class="text-center"><%= shortURL.clicks %></td>
-								<td class="text-center"><%= shortURL.createdAt %></td>
+								<td class="text-center"><%= humanDate(shortURL.createdAt) %></td>
 							</tr>
 							<% }); %>
 						</tbody>

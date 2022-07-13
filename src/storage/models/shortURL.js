@@ -21,7 +21,7 @@ const shortURLSchema = new mongoose.Schema({
 		default: 0,
 	},
 	createdAt: {
-		type: String,
+		type: Date,
 		required: true,
 	},
 });

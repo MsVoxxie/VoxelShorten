@@ -9,7 +9,6 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const express = require('express');
 const bcrypt = require('bcrypt');
-const moment = require('moment');
 const https = require('https');
 const path = require('path');
 require('dotenv').config();
@@ -58,7 +57,7 @@ const views = {
 //Home Page
 app.get('/', helpers.checkAuthenticated, async (req, res) => {
 	const shortURLS = await ShortURL.find({ owner: req.session.passport.user }).sort({ createdAt: -1 });
-	res.render(views.home, { shortURLS, trim: helpers.trim });
+	res.render(views.home, { shortURLS, trim: helpers.trim, humanDate: helpers.humanDate });
 });
 
 // Login Page
@@ -100,7 +99,7 @@ app.post('/register', helpers.checkNotAuthenticated, async (req, res) => {
 
 // Shorten Endpoint
 app.post('/shortenURL', async (req, res) => {
-	await ShortURL.create({ owner: req.session.passport.user, full: req.body.fullURL, createdAt: moment(Date().now).format('MMMM Do YYYY, h:mm A') });
+	await ShortURL.create({ owner: req.session.passport.user, full: req.body.fullURL, createdAt: Date.now() });
 	res.redirect('/');
 });
 
