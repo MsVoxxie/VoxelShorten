@@ -4,6 +4,7 @@ const ShortURL = require('./storage/models/shortURL');
 const helpers = require('./storage/funcs/helpers');
 const session = require('express-session');
 const flash = require('express-flash');
+const Store = require('connect-mongo');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -32,8 +33,14 @@ app.use(flash());
 app.use(
 	session({
 		secret: process.env.SESSION_SECRET,
+		cookie: {
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+			httpOnly: true,
+			secure: true,
+		},
 		resave: false,
 		saveUninitialized: false,
+		store: Store.create({ mongoUrl: process.env.DATABASE_URL }),
 	})
 );
 app.use(passport.initialize());
