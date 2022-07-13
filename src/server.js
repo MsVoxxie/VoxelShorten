@@ -48,7 +48,6 @@ const views = {
 
 //Home Page
 app.get('/', helpers.checkAuthenticated, async (req, res) => {
-	console.log(req.session.passport.user);
 	const shortURLS = await ShortURL.find({ owner: req.session.passport.user }).sort({ createdAt: -1 });
 	res.render(views.home, { shortURLS, trim: helpers.trim });
 });
