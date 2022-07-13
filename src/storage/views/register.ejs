@@ -15,11 +15,11 @@
 				<form action="/register" method="POST">
 					<div class="input-group mb-3">
 						<span class="input-group-text">Username</span>
-						<input type="username" name="username" id="username" class="form-control" required />
+						<input type="username" name="username" id="username" class="form-control" required minlength="3"/>
 					</div>
 					<div class="input-group mb-3">
 						<span class="input-group-text">Password</span>
-						<input type="password" name="password" id="password" class="form-control" required />
+						<input type="password" name="password" id="password" class="form-control" required minlength="5" />
 					</div>
 					<button type="submit" class="btn btn-success form-control mb-2">Register</button>
 				</form>
